@@ -27,7 +27,6 @@ include_directories(${CMAKE_SOURCE_DIR}/dependencies/LiteMath)
 
 if (MODULE_VULKAN)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-
   find_package(Vulkan)
   FetchContent_Declare(
     volk
@@ -57,15 +56,15 @@ if (MODULE_VULKAN)
                      ${CMAKE_SOURCE_DIR}/dependencies/vkutils/vk_context.cpp
                      ${CMAKE_SOURCE_DIR}/dependencies/vkutils/vk_alloc_simple.cpp
                      ${CMAKE_SOURCE_DIR}/dependencies/vkutils/vk_pipeline.cpp
-                     ${CMAKE_SOURCE_DIR}/dependencies/vkutils/vk_descriptor_sets.cpp)   
+                     ${CMAKE_SOURCE_DIR}/dependencies/vkutils/vk_descriptor_sets.cpp)
 
-  set(VKGEN_SOURCE tensor_processor_impl_gpu.cpp 
+  set(VKGEN_SOURCE tensor_processor_impl_gpu.cpp
                    tensor_processor_impl_gpu_ds.cpp
-                   tensor_processor_impl_gpu_init.cpp) 
+                   tensor_processor_impl_gpu_init.cpp)
 
   set(MODULES_SRC ${MODULES_SRC} ${VKGEN_SOURCE} ${VKUTILS_SOURCE})
 
-  set(MODULES_LIBRARIES ${MODULES_LIBRARIES} ${Vulkan_LIBRARY} OpenMP::OpenMP_CXX volk dl)
+  set(MODULES_LIBRARIES ${MODULES_LIBRARIES} OpenMP::OpenMP_CXX volk)
 endif()
 
 set(SRC
@@ -73,7 +72,7 @@ set(SRC
       direct/neural_network.cpp
       direct/siren.cpp
       direct/nnd_tests.cpp
-      
+
       tensor_processor.cpp
       tensor_processor_impl.cpp
       tensor_compiler.cpp
@@ -83,8 +82,6 @@ set(SRC
       nn_tests.cpp
       dataset.cpp
       nn_tests_performance.cpp
-      
-      standalone_tests.cpp)  
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++17 -g -O3 -W -Wno-attributes -Wno-sign-compare -Wno-unused-parameter ")
 add_executable(nn_test ${MODULES_SRC} ${SRC})

@@ -37,18 +37,18 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-        float max_val = data[kgenArgs.A.offset + step*kgenArgs.x_steps*kgenArgs.window_x*kgenArgs.y_steps*kgenArgs.window_y + (y*kgenArgs.window_y+0)*kgenArgs.x_steps + x*kgenArgs.window_x + 0];
-        for (int wy=0;wy<kgenArgs.window_y;wy++)
-        {
-          for (int wx=0;wx<kgenArgs.window_x;wx++)
-          {
-            float val = data[kgenArgs.A.offset + step*kgenArgs.x_steps*kgenArgs.window_x*kgenArgs.y_steps*kgenArgs.window_y + (y*kgenArgs.window_y+wy)*kgenArgs.x_steps*kgenArgs.window_x + x*kgenArgs.window_x + uint(wx)];
-            if (val > max_val)
-              max_val = val;
-          }
-        }
-        data[kgenArgs.res.offset + step*kgenArgs.x_steps*kgenArgs.y_steps + y*kgenArgs.x_steps + uint(x)] = max_val;
+  
+        float max_val = data[kgenArgs.A.offset + step*kgenArgs.x_steps*kgenArgs.window_x*kgenArgs.y_steps*kgenArgs.window_y + (y*kgenArgs.window_y+0)*kgenArgs.x_steps + x*kgenArgs.window_x + 0];
+        for (int wy=0;wy<kgenArgs.window_y;wy++)
+        {
+          for (int wx=0;wx<kgenArgs.window_x;wx++)
+          {
+            float val = data[kgenArgs.A.offset + step*kgenArgs.x_steps*kgenArgs.window_x*kgenArgs.y_steps*kgenArgs.window_y + (y*kgenArgs.window_y+wy)*kgenArgs.x_steps*kgenArgs.window_x + x*kgenArgs.window_x + uint(wx)];
+            if (val > max_val)
+              max_val = val;
+          }
+        }
+        data[kgenArgs.res.offset + step*kgenArgs.x_steps*kgenArgs.y_steps + y*kgenArgs.x_steps + uint(x)] = max_val;
       
   }
 }

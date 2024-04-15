@@ -73,12 +73,12 @@ complex complex_sqrt(complex z)
 }
 
 const uint AGroupSize = 256;
-struct Variable
-    {
-      uint Dim;
-      uint offset;
-      uint total_size;
-      uint sizes[8]; //MAX_DIM
+struct Variable
+    {
+      uint Dim;
+      uint offset;
+      uint total_size;
+      uint sizes[8]; //MAX_DIM
     };
 
 #ifndef SKIP_UBO_INCLUDE
@@ -137,4 +137,5 @@ mat3 make_float3x3(vec3 a, vec3 b, vec3 c) { // different way than mat3(a,b,c)
 #define KGEN_FLAG_SET_EXIT_NEGATIVE 8
 #define KGEN_REDUCTION_LAST_STEP    16
 #define DEBUG 0
+#define NO_INLINE 
 

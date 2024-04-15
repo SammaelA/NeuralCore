@@ -33,9 +33,9 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    float tmp = kgenArgs.val;
-    data[kgenArgs.A.offset + i] = tmp;
+  
+    float tmp = kgenArgs.val;
+    data[kgenArgs.A.offset + i] = tmp;
   
   }
 }

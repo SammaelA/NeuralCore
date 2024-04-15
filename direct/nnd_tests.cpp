@@ -21,6 +21,8 @@
 #include "../stb_image_write.h"
 
 
+using uint = uint32_t;
+
 namespace nnd
 {
   void write_image_rgb(std::string path, const TensorView &image_tensor)
@@ -31,7 +33,7 @@ namespace nnd
     unsigned char *data = new unsigned char[image_tensor.total_size];
     for (int i=0;i<image_tensor.total_size;i++)
     data[i] = std::max(0, std::min(255, (int)(255*image_tensor.get(i))));
-    
+
     stbi_write_png(path.c_str(), image_tensor.size(1), image_tensor.size(2), 3, data, 3*image_tensor.size(1));
 
     delete[] data;

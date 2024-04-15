@@ -22,7 +22,7 @@ layout( push_constant ) uniform kernelArgs
   Variable B;
   Variable C;
   uint iNumElementsX; 
-  uint steps; 
+  int steps; 
   uint iNumElementsZ; 
   uint tFlagsMask;    
 } kgenArgs;
@@ -32,21 +32,21 @@ void main()
 {
   bool runThisThread = true;
   ///////////////////////////////////////////////////////////////// prolog
-  const uint s1 = uint(gl_GlobalInvocationID[0]); 
+  const int s1 = int(gl_GlobalInvocationID[0]); 
   if(s1 >= kgenArgs.iNumElementsX + 0)
     runThisThread = false;
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    for (uint s2 = 0; s2 < min(AGroupSize, kgenArgs.total_size-s1*AGroupSize); s2++)
-    {
-    uint s = s1*AGroupSize + s2;
-    uint Ai = kgenArgs.Ai_mul & s;
-    uint Bi = s / kgenArgs.group_size % kgenArgs.step_size;
-    uint Ci = s;
-    data[kgenArgs.C.offset + Ci] = data[kgenArgs.A.offset + Ai] >= data[kgenArgs.B.offset + Bi] ? 1.0f : 0.0f;
-    }
+  
+    for (uint s2 = 0; s2 < min(AGroupSize, kgenArgs.total_size-uint(s1)*AGroupSize); s2++)
+    {
+    uint s = uint(s1)*AGroupSize + s2;
+    uint Ai = kgenArgs.Ai_mul & s;
+    uint Bi = s / kgenArgs.group_size % kgenArgs.step_size;
+    uint Ci = s;
+    data[kgenArgs.C.offset + Ci] = data[kgenArgs.A.offset + Ai] >= data[kgenArgs.B.offset + Bi] ? 1.0f : 0.0f;
+    }
   
   }
 }

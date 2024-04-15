@@ -18,7 +18,7 @@ layout( push_constant ) uniform kernelArgs
   Variable A;
   Variable B;
   uint iNumElementsX; 
-  uint steps; 
+  int steps; 
   uint iNumElementsZ; 
   uint tFlagsMask;    
 } kgenArgs;
@@ -28,16 +28,16 @@ void main()
 {
   bool runThisThread = true;
   ///////////////////////////////////////////////////////////////// prolog
-  const uint i = uint(gl_GlobalInvocationID[0]); 
+  const int i = int(gl_GlobalInvocationID[0]); 
   if(i >= kgenArgs.iNumElementsX + 0)
     runThisThread = false;
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    data[kgenArgs.B.offset + i] = 0;
-    for (uint j = 0; j < kgenArgs.step_size; j++)
-      data[kgenArgs.B.offset + i] += data[kgenArgs.A.offset + j * kgenArgs.steps + i];
+  
+    data[kgenArgs.B.offset + uint(i)] = 0;
+    for (uint j = 0; j < kgenArgs.step_size; j++)
+      data[kgenArgs.B.offset + uint(i)] += data[kgenArgs.A.offset + j * kgenArgs.steps + uint(i)];
   
   }
 }

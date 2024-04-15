@@ -34,10 +34,10 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    data[kgenArgs.B.offset + i] = data[kgenArgs.A.offset + i * kgenArgs.step_size + 0];
-    for (uint j = 0; j < kgenArgs.step_size; j++)
-      data[kgenArgs.B.offset + i] = data[kgenArgs.A.offset + i * kgenArgs.step_size + j] > data[kgenArgs.B.offset + i] ? data[kgenArgs.A.offset + i * kgenArgs.step_size + j] : data[kgenArgs.B.offset + i];
+  
+    data[kgenArgs.B.offset + i] = data[kgenArgs.A.offset + i * kgenArgs.step_size + 0];
+    for (uint j = 0; j < kgenArgs.step_size; j++)
+      data[kgenArgs.B.offset + i] = data[kgenArgs.A.offset + i * kgenArgs.step_size + j] > data[kgenArgs.B.offset + i] ? data[kgenArgs.A.offset + i * kgenArgs.step_size + j] : data[kgenArgs.B.offset + i];
   
   }
 }

@@ -36,14 +36,14 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    uint B_step_size = kgenArgs.step_size + kgenArgs.left_pad + kgenArgs.right_pad;
-    for (uint j = 0; j < kgenArgs.left_pad; j++)
-      data[kgenArgs.B.offset + i * B_step_size + j] = 0;
-    for (uint j = 0; j < kgenArgs.step_size; j++)
-      data[kgenArgs.B.offset + i * B_step_size + kgenArgs.left_pad + j] = data[kgenArgs.A.offset + i * kgenArgs.step_size + j];
-    for (uint j = 0; j < kgenArgs.right_pad; j++)
-      data[kgenArgs.B.offset + i * B_step_size + kgenArgs.left_pad + kgenArgs.step_size + j] = 0;
+  
+    uint B_step_size = kgenArgs.step_size + kgenArgs.left_pad + kgenArgs.right_pad;
+    for (uint j = 0; j < kgenArgs.left_pad; j++)
+      data[kgenArgs.B.offset + i * B_step_size + j] = 0;
+    for (uint j = 0; j < kgenArgs.step_size; j++)
+      data[kgenArgs.B.offset + i * B_step_size + kgenArgs.left_pad + j] = data[kgenArgs.A.offset + i * kgenArgs.step_size + j];
+    for (uint j = 0; j < kgenArgs.right_pad; j++)
+      data[kgenArgs.B.offset + i * B_step_size + kgenArgs.left_pad + kgenArgs.step_size + j] = 0;
   
   }
 }

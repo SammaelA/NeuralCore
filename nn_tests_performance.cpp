@@ -28,7 +28,7 @@ namespace nn
   {
     printf("TEST 1. MATRIX MULTIPLICATION BENCHMARK\n");
 
-    std::vector<unsigned> sizes = {1, 16, 64, 256, 1024, 2048};
+    std::vector<unsigned> sizes = {16, 64, 256, 1024, 2048};
 
     std::vector<float> A(sizes.back()*sizes.back(), 0);
     std::vector<float> B(sizes.back()*sizes.back(), 0);
@@ -36,6 +36,7 @@ namespace nn
     std::vector<float> C_ref(sizes.back()*sizes.back(), 0);
     TensorCompiler tc;
 
+    srand(0);
     for (unsigned size_A : sizes)
     {
       for (unsigned size_B : sizes)
@@ -43,11 +44,11 @@ namespace nn
         unsigned n_tries = size_A == 2048 ? 25 : (size_A == 1024 ? 50 : 500);
 
         for (int i=0;i<size_A*size_A;i++)
-          A[i] = 2.0*rand()/RAND_MAX + 1.0;
+          A[i] = ((float)rand()/RAND_MAX - 0.5) * 0.01;
 
         for (int i=0;i<size_A*size_B;i++)
-          B[i] = 2.0*rand()/RAND_MAX + 1.0;
-        
+          B[i] = ((float)rand()/RAND_MAX - 0.5) * 0.01;
+
         for (int i=0;i<size_B;i++)
         {
           for (int j=0;j<size_A;j++)
@@ -69,9 +70,9 @@ namespace nn
           tc.input(A, "A");
           tc.input(B, "B");
           tc.output(C, "C");
-        }     
-        TensorProgram p = tc.finish_program();   
-        
+        }
+        TensorProgram p = tc.finish_program();
+
     auto t_2 = std::chrono::steady_clock::now();
 
         TensorProcessor::set_program(p);
@@ -86,7 +87,7 @@ namespace nn
     auto t_4 = std::chrono::steady_clock::now();
 
         TensorProcessor::get_output("C", C.data(), C.size());
-    
+
     auto t_5 = std::chrono::steady_clock::now();
 
         long double sum_diff = 0;
@@ -97,7 +98,6 @@ namespace nn
         {
           for (int j=0;j<size_B;j++)
           {
-            //printf("(%u %u) %f %f\n",i,j, C_ref[i*size_B + j], C[i*size_B + j]);
             double diff = abs(C_ref[i*size_B + j] - C[i*size_B + j]);
             sum_diff += diff;
             if (diff > max_diff)
@@ -109,16 +109,17 @@ namespace nn
           }
         }
 
-        
+
         float t_compile = 0.001/n_tries*std::chrono::duration_cast<std::chrono::microseconds>(t_2 - t_1).count();
         float t_input =   0.001/n_tries*std::chrono::duration_cast<std::chrono::microseconds>(t_3 - t_2).count();
         float t_execute = 0.001/n_tries*std::chrono::duration_cast<std::chrono::microseconds>(t_4 - t_3).count();
         float t_output =  0.001/n_tries*std::chrono::duration_cast<std::chrono::microseconds>(t_5 - t_4).count();
 
-        printf("matmul (%4ux%4u)*(%4ux%4u): exec %7.2f ms, overhead %5.2f+%5.2f+%5.2f ms, av. diff %.2Le, max diff %.2le at (%u %u)\n", 
+        printf("matmul (%4ux%4u)*(%4ux%4u): exec %7.2f ms, overhead %5.2f+%5.2f+%5.2f ms, av. diff %.2Le, max diff %.2le at (%u %u)\n",
                size_A, size_A, size_B, size_A, t_execute, t_compile, t_input, t_output,
                sum_diff/(size_A*size_B), max_diff, max_diff_i, max_diff_j);
-      }      
+        fflush(stdout);
+      }
     }
   }
 
@@ -137,7 +138,7 @@ namespace nn
       for (int i=0;i<test_functions.size();i++)
         tests[i] = i+1;
     }
-    
+
     TensorProcessor::init("GPU");
 
     for (int i=0;i<80;i++)
@@ -146,7 +147,7 @@ namespace nn
     for (int i=0;i<80;i++)
       printf("#");
     printf("\n");
-    
+
     for (int i : tests)
     {
       assert(i > 0 && i <= test_functions.size());

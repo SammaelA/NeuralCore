@@ -36,7 +36,7 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  for (uint k = 0; k < kgenArgs.group_size; k++)
+  for (uint k = 0; k < kgenArgs.group_size; k++)
           data[kgenArgs.B.offset + (s*kgenArgs.col_len*kgenArgs.row_len + i*kgenArgs.col_len + j)*kgenArgs.group_size + k] = data[kgenArgs.A.offset + (s*kgenArgs.col_len*kgenArgs.row_len + j*kgenArgs.row_len + i)*kgenArgs.group_size + k];
   }
 }

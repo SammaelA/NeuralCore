@@ -1,6 +1,7 @@
 #pragma once
 #include "tensors.h"
 #include <vector>
+#include <string>
 #include <cstdint>
 #include <array>
 #include <cmath>

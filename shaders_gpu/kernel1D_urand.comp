@@ -33,10 +33,10 @@ void main()
     ///////////////////////////////////////////////////////////////// prolog
   if(runThisThread)
   {
-  
-    uint n = kgenArgs.seed + i;
-    n = (n << 13) ^ n; 
-    data[kgenArgs.A.offset + i] = float((n * (n*n*15731+789221) + 1376312589) & 0x3fffffff) / float(0x3fffffff);
+  
+    uint n = kgenArgs.seed + i;
+    n = (n << 13) ^ n;
+    data[kgenArgs.A.offset + i] = float((n * (n*n*15731+789221) + 1376312589) & 0x3fffffff) / float(0x3fffffff);
   
   }
 }

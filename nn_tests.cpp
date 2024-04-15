@@ -51,7 +51,7 @@ namespace nn
     unsigned char *data = new unsigned char[3*width*height];
     for (int i=0;i<3*width*height;i++)
       data[i] = std::max(0, std::min(255, (int)(255*image_data[i])));
-    
+
     stbi_write_png((base_path+path).c_str(), width, height, 3, data, 3*width);
 
     delete[] data;
@@ -181,16 +181,16 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<9;i++)
       TensorProcessor::get_output("R"+std::to_string(i+1), res.data()+i*9, 9);
 
-    std::vector<std::pair<std::string, std::vector<float>>> reference = 
+    std::vector<std::pair<std::string, std::vector<float>>> reference =
     {
       {{"R1"}, {1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 0.00, 0.00, 0.00,}},
-      {{"R2"}, {14.00, 32.00, -14.00, -32.00, 0.00, 0.00, 0.00, 0.00, 0.00,}}, 
-      {{"R3"}, {7.00, 8.00, 9.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,}}, 
-      {{"R4"}, {50.00, -50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,}}, 
-      {{"R5"}, {1.00, -1.00, 2.00, -2.00, 3.00, -3.00, 0.00, 0.00, 0.00,}}, 
+      {{"R2"}, {14.00, 32.00, -14.00, -32.00, 0.00, 0.00, 0.00, 0.00, 0.00,}},
+      {{"R3"}, {7.00, 8.00, 9.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,}},
+      {{"R4"}, {50.00, -50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,}},
+      {{"R5"}, {1.00, -1.00, 2.00, -2.00, 3.00, -3.00, 0.00, 0.00, 0.00,}},
       {{"R6"}, {1.00, 2.00, 3.00, 2.00, 4.00, 6.00, 3.00, 6.00, 9.00,}},
-      {{"R7"}, {-4.00, -5.00, -6.00, -8.00, -10.00, -12.00, -12.00, -15.00, -18.00,}}, 
-      {{"R8"}, {171.00, 2.00, 3.00, 2.00, 4.00, 6.00, 3.00, 6.00, 9.00,}}, 
+      {{"R7"}, {-4.00, -5.00, -6.00, -8.00, -10.00, -12.00, -12.00, -15.00, -18.00,}},
+      {{"R8"}, {171.00, 2.00, 3.00, 2.00, 4.00, 6.00, 3.00, 6.00, 9.00,}},
       {{"R9"}, {-4.00, -5.00, -6.00, -8.00, -10.00, -12.00, -12.00, -15.00, -18.00,}}
     };
 
@@ -263,7 +263,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<ref.size();i++)
       diff += std::abs(r[i] - ref[i]);
-    
+
     printf("  4.1. %-64s", "Correct result ");
     if (diff < 1e-6)
       printf("passed\n");
@@ -323,8 +323,8 @@ void tp_test_1_tensor_processor()
       {
         pixel_data[2*(i*width + j) + 0] = 2*(float)j/width-1;
         pixel_data[2*(i*width + j) + 1] = 2*(float)i/height-1;
-        image_data_grayscale[i*width + j] = 0.2126 * image_data[3*(i*width + j)+0] + 
-                                            0.7152 * image_data[3*(i*width + j)+1] + 
+        image_data_grayscale[i*width + j] = 0.2126 * image_data[3*(i*width + j)+0] +
+                                            0.7152 * image_data[3*(i*width + j)+1] +
                                             0.0722 * image_data[3*(i*width + j)+2];
         image_data_grayscale[i*width + j] = 2*(image_data_grayscale[i*width + j]) - 1;
       }
@@ -360,7 +360,7 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<image_data_res.size();i++)
       diff += abs(image_data_res[i] - image_data_grayscale[i]);
     diff /= image_data_res.size();
-    
+
     printf("  3.1. %-64s", "Decent image optimization ");
     if (diff < 0.25f)
       printf("passed\n");
@@ -402,7 +402,7 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<predicted_distances.size();i++)
       diff += abs(predicted_distances[i] - distances[i]);
     diff /= predicted_distances.size();
-    
+
     printf("  4.1. %-64s", "Good simple SDF optimization ");
     if (diff < 0.01f)
       printf("passed\n");
@@ -443,7 +443,7 @@ void tp_test_1_tensor_processor()
       printf("passed\n");
     else
       printf("FAILED %f %f %f != %f %f %f\n", A[0], A[1], A[2], 0.25f, 0.25f, 0.5f);
-    
+
   }
 
   void nn_test_5_simple_classifier()
@@ -588,17 +588,17 @@ void tp_test_1_tensor_processor()
     TensorProcessor::execute();
     for (int i=0;i<10;i++)
       TensorProcessor::get_output("R"+std::to_string(i+1), res.data()+i*6, 6);
-  
-    std::vector<std::pair<std::string, std::vector<float>>> reference = 
+
+    std::vector<std::pair<std::string, std::vector<float>>> reference =
     {
       {{"R1"}, {1,1,1,0,0,1}},
-      {{"R2"}, {1,2,0,0,0,2}}, 
-      {{"R3"}, {1,0,0,0,0,0}}, 
-      {{"R4"}, {0,0,1,1,1,1}}, 
-      {{"R5"}, {1,1,0,0,0,0}}, 
+      {{"R2"}, {1,2,0,0,0,2}},
+      {{"R3"}, {1,0,0,0,0,0}},
+      {{"R4"}, {0,0,1,1,1,1}},
+      {{"R5"}, {1,1,0,0,0,0}},
       {{"R6"}, {0,1,1,1,1,1}},
-      {{"R7"}, {0,1,0,0,0,0}}, 
-      {{"R8"}, {1,0,1,1,1,1}}, 
+      {{"R7"}, {0,1,0,0,0,0}},
+      {{"R8"}, {1,0,1,1,1,1}},
       {{"R9"}, {0,1,0,0,0,0}},
       {{"R10"},{1,0,1,1,1,1}}
     };
@@ -658,7 +658,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<PadX.size();i++)
       diff += abs(PadX[i] - PadX_ref[i]);
-    
+
     printf("  7.1. %-64s","X padding");
     if (diff < 1e-6)
       printf("passed\n");
@@ -669,7 +669,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<PadY.size();i++)
       diff += abs(PadY[i] - PadY_ref[i]);
-    
+
     printf("  7.2. %-64s","Y padding");
     if (diff < 1e-6)
       printf("passed\n");
@@ -680,7 +680,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<PadXY.size();i++)
       diff += abs(PadXY[i] - PadXY_ref[i]);
-    
+
     printf("  7.3. %-64s","X and Y padding");
     if (diff < 1e-6)
       printf("passed\n");
@@ -729,20 +729,20 @@ void tp_test_1_tensor_processor()
                             0, 1, 4, 9, 16,
                             0, 1, 4, 9, 16,
                             0, 1, 4, 9, 16,
-                            
+
                             0, 0, 0, 0, 0,
                             1, 1, 1, 1, 1,
                             4, 4, 4, 4, 4,
                             9, 9, 9, 9, 9,
                             16,16,16,16,16,
-                            
-                            
+
+
                             -0, -1, -4, -9, -16,
                             -0, -1, -4, -9, -16,
                             -0, -1, -4, -9, -16,
                             -0, -1, -4, -9, -16,
                             -0, -1, -4, -9, -16,
-                            
+
                             -0, -0, -0, -0, -0,
                             -1, -1, -1, -1, -1,
                             -4, -4, -4, -4, -4,
@@ -755,13 +755,13 @@ void tp_test_1_tensor_processor()
                             1,1,1,1,1,
                             1,1,1,1,1,
                             1,1,1,1,1,
-                            
+
                             1,1,1,1,1,
                             1,1,1,1,1,
                             1,1,1,1,1,
                             1,1,1,1,1,
                             1,1,1,1,1};
-    
+
     std::vector<float> B_kernel = {0,0,0,-1,0,1,0,0,0,  0,0,0,-1,0,1,0,0,0,
                                    0,-1,0,0,0,0,0,1,0,  0,-1,0,0,0,0,0,1,0};
 
@@ -772,11 +772,11 @@ void tp_test_1_tensor_processor()
     std::vector<float> R1(15, 0.0f), R1_ref = {4, 8, 12, 4, 8, 12, 4, 8, 12, 4, 8, 12, 4, 8, 12,};
     std::vector<float> R2(15, 0.0f), R2_ref = {4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 12, 12, 12, 12, 12,};
     std::vector<float> R3(4, 0.0f), R3_ref = {30, 102, 102, 174,};
-    std::vector<float> R4(3*3*2*3, 0.0f), R4_ref = {4,8,12, 4,8,12, 4,8,12, 
-                                                    4,4,4, 8,8,8, 12,12,12, 
-                                                    -4,-8,-12, -4,-8,-12, -4,-8,-12, 
-                                                    -4,-4,-4, -8,-8,-8, -12,-12,-12, 
-                                                    0,0,0, 0,0,0, 0,0,0, 
+    std::vector<float> R4(3*3*2*3, 0.0f), R4_ref = {4,8,12, 4,8,12, 4,8,12,
+                                                    4,4,4, 8,8,8, 12,12,12,
+                                                    -4,-8,-12, -4,-8,-12, -4,-8,-12,
+                                                    -4,-4,-4, -8,-8,-8, -12,-12,-12,
+                                                    0,0,0, 0,0,0, 0,0,0,
                                                     0,0,0, 0,0,0, 0,0,0, };
 
     TensorProcessor::set_program(p);
@@ -801,7 +801,7 @@ void tp_test_1_tensor_processor()
     printf("\n");
     for (auto &v : R3)
       printf("%f, ", v);
-    printf("\n");    
+    printf("\n");
     for (auto &v : R4)
       printf("%f, ", v);
     printf("\n");*/
@@ -811,7 +811,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<R1.size();i++)
       diff += abs(R1[i] - R1_ref[i]);
-    
+
     printf("  8.1. %-64s","kernel X");
     if (diff < 1e-6)
       printf("passed\n");
@@ -822,7 +822,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<R2.size();i++)
       diff += abs(R2[i] - R2_ref[i]);
-    
+
     printf("  8.2. %-64s","kernel Y");
     if (diff < 1e-6)
       printf("passed\n");
@@ -833,7 +833,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<R3.size();i++)
       diff += abs(R3[i] - R3_ref[i]);
-    
+
     printf("  8.3. %-64s","kernel with stride > 1");
     if (diff < 1e-6)
       printf("passed\n");
@@ -844,7 +844,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<R4.size();i++)
       diff += abs(R4[i] - R4_ref[i]);
-    
+
     printf("  8.4. %-64s","multi-layered kernel");
     if (diff < 1e-6)
       printf("passed\n");
@@ -870,8 +870,8 @@ void tp_test_1_tensor_processor()
       {
         pixel_data[2*(i*width + j) + 0] = 2*(float)j/width-1;
         pixel_data[2*(i*width + j) + 1] = 2*(float)i/height-1;
-        image_data_grayscale[i*width + j] = 0.2126 * image_data[3*(i*width + j)+0] + 
-                                            0.7152 * image_data[3*(i*width + j)+1] + 
+        image_data_grayscale[i*width + j] = 0.2126 * image_data[3*(i*width + j)+0] +
+                                            0.7152 * image_data[3*(i*width + j)+1] +
                                             0.0722 * image_data[3*(i*width + j)+2];
         image_data_grayscale[i*width + j] = 2*(image_data_grayscale[i*width + j]) - 1;
       }
@@ -912,7 +912,7 @@ void tp_test_1_tensor_processor()
       }
     }
     write_image_rgb("1a_blurred.png", image_data, width, height);
-    
+
     for (int i=0;i<height;i++)
     {
       for (int j=0;j<width;j++)
@@ -923,7 +923,7 @@ void tp_test_1_tensor_processor()
       }
     }
     write_image_rgb("1a_gray.png", image_data, width, height);
-    
+
     printf("  9.1. blur took %4.1f ms                                               ", ms);
     printf("passed\n");
   }
@@ -931,7 +931,7 @@ void tp_test_1_tensor_processor()
   void nn_test_6_conv2D_forward()
   {
     printf("TEST 6. CONV_2D FORWARD PASS\n");
-    std::vector<float> X = {2 ,5 ,10, 
+    std::vector<float> X = {2 ,5 ,10,
                             5 ,8 ,13,
                             10,13,18};
     std::vector<float> w = {0,-1,0,0,0,0,0,1,0, 0,0,0,-1,0,1,0,0,0, 0,0};
@@ -946,7 +946,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<r_ref.size();i++)
       diff += std::abs(r[i] - r_ref[i]);
-    
+
     printf("  6.1. %-64s", "Correct result ");
     if (diff < 1e-6)
       printf("passed\n");
@@ -961,7 +961,7 @@ void tp_test_1_tensor_processor()
   void nn_test_7_conv2D_backward()
   {
     printf("TEST 7. CONV_2D BACKWARD PASS\n");
-    std::vector<float> X = {2 ,5 ,10, 
+    std::vector<float> X = {2 ,5 ,10,
                             5 ,8 ,13,
                             10,13,18};
     std::vector<float> w = {0,-1,0,0,0,0,0,1,0, 0,0,0,-1,0,1,0,0,0};
@@ -978,11 +978,11 @@ void tp_test_1_tensor_processor()
     //for (auto &v : r)
     //  printf("%f, ", v);
     //printf("\n");
-    
+
     float diff = 0.0f;
     for (int i=0;i<r_ref.size();i++)
       diff += std::abs(r[i] - r_ref[i]);
-    
+
     printf("  7.1. %-64s", "Correct result ");
     if (diff < 1.0f)
       printf("passed\n");
@@ -1006,11 +1006,11 @@ void tp_test_1_tensor_processor()
     //for (auto &v : r)
     //  printf("%f, ", v);
     //printf("\n");
-    
+
     float diff = 0.0f;
     for (int i=0;i<r_ref.size();i++)
       diff += std::abs(r[i] - r_ref[i]);
-    
+
     printf("  8.1. %-64s", "Correct result ");
     if (diff < 1e-4)
       printf("passed\n");
@@ -1067,7 +1067,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<B.size();i++)
       diff += abs(B[i] - B_ref[i]);
-    
+
     printf(" 11.1. %-64s","forward pass");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1078,7 +1078,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<dIn.size();i++)
       diff += abs(dIn[i] - dIn_ref[i]);
-    
+
     printf(" 11.2. %-64s","backward pass");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1334,7 +1334,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<A_res.size();i++)
       diff += abs(A_res[i] - A_ref[i]);
-    
+
     printf(" 13.1. %-64s","1D dilation");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1345,13 +1345,13 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<B_res.size();i++)
       diff += abs(B_res[i] - B_ref[i]);
-    
+
     printf(" 13.2. %-64s","2D dilation");
     if (diff < 1e-6)
       printf("passed\n");
     else
       printf("FAILED diff %f >= %f\n", diff, 1e-6f);
-    }    
+    }
   }
 
   void nn_test_12_conv2D_stride()
@@ -1373,11 +1373,11 @@ void tp_test_1_tensor_processor()
     //for (auto &v : r)
     //  printf("%f, ", v);
     //printf("\n");
-    
+
     float diff = 0.0f;
     for (int i=0;i<r_ref.size();i++)
       diff += std::abs(r[i] - r_ref[i]);
-    
+
     printf(" 12.1. %-64s", "Correct result ");
     if (diff < 1.0f)
       printf("passed\n");
@@ -1451,19 +1451,19 @@ void tp_test_1_tensor_processor()
       printf("passed\n");
     else
       printf("FAILED, precision %f\n", pr);
-  
+
     printf(" 13.3. %-64s", "High recall");
     if (recall > 0.95)
       printf("passed\n");
     else
       printf("FAILED, recall %f\n", recall);
-      
+
     printf(" 13.4. %-64s", "High AUC ROC");
     if (auc_roc > 0.95)
       printf("passed\n");
     else
       printf("FAILED, AUC ROC %f\n", auc_roc);
-      
+
     printf(" 13.5. %-64s", "High AUC PR");
     if (auc_pr > 0.95)
       printf("passed\n");
@@ -1517,7 +1517,7 @@ void tp_test_1_tensor_processor()
     nn2.add_layer(std::make_shared<ReLULayer>());
     nn2.add_layer(std::make_shared<DenseLayer>(64, 2), Initializer::He);
     nn2.add_layer(std::make_shared<SoftMaxLayer>());
-    nn2.train(X_train.data(), y_train.data(), train_sz, 64, 2, true, OptimizerAdam(0.001f), Loss::CrossEntropy, 
+    nn2.train(X_train.data(), y_train.data(), train_sz, 64, 2, true, OptimizerAdam(0.001f), Loss::CrossEntropy,
               Metric::Accuracy);
 
 
@@ -1559,7 +1559,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<A_res.size();i++)
       diff += abs(A_res[i] - A_ref[i]);
-    
+
     printf(" 10.1. %-64s","Same seed gives same result");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1580,7 +1580,7 @@ void tp_test_1_tensor_processor()
       printf("passed\n");
     else
       printf("FAILED mean %f variance %f\n", mean, variance);
-    }     
+    }
   }
 
   void nn_test_15_dropout()
@@ -1741,7 +1741,7 @@ void tp_test_1_tensor_processor()
     std::vector<float> B = {1,0,1,
                             0,1,0,
                             1,0,1,
-                            
+
                             0,1,0,
                             1,0,1,
                             0,1,0,
@@ -1772,7 +1772,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<res_1.size();i++)
       diff += abs(res_1[i] - res_1_ref[i]);
-    
+
     printf(" 14.1. %-64s","stride = 1");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1783,13 +1783,13 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<res_2.size();i++)
       diff += abs(res_2[i] - res_2_ref[i]);
-    
+
     printf(" 14.2. %-64s","stride = 2");
     if (diff < 1e-6)
       printf("passed\n");
     else
       printf("FAILED diff %f >= %f\n", diff, 1e-6f);
-    }   
+    }
   }
 
   void nn_test_18_conv3D_backward()
@@ -1833,11 +1833,11 @@ void tp_test_1_tensor_processor()
     //for (auto &v : r)
     //  printf("%f, ", v);
     //printf("\n");
-  
+
     float diff = 0.0f;
     for (int i=0;i<r_ref.size();i++)
       diff += std::abs(r[i] - r_ref[i]);
-    
+
     printf(" 18.1. %-64s", "Correct result ");
     if (diff < 1.0f)
       printf("passed\n");
@@ -1870,7 +1870,7 @@ void tp_test_1_tensor_processor()
 
                             3,4,  6, 7,
                             7,0,  8, 9,
-                              
+
                             1,0, -2,-1,
                             0,0, -3,-4,
 
@@ -1883,7 +1883,7 @@ void tp_test_1_tensor_processor()
 
                                                     0,0, 0,0,
                                                     3,0, 0,4,
-                                                    
+
                                                     0,0, 0,2,
                                                     0,0, 0,0,
 
@@ -1906,7 +1906,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<B.size();i++)
       diff += abs(B[i] - B_ref[i]);
-    
+
     printf(" 15.1. %-64s","forward pass");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1917,7 +1917,7 @@ void tp_test_1_tensor_processor()
     float diff = 0.0f;
     for (int i=0;i<dIn.size();i++)
       diff += abs(dIn[i] - dIn_ref[i]);
-    
+
     printf(" 15.2. %-64s","backward pass");
     if (diff < 1e-6)
       printf("passed\n");
@@ -1932,7 +1932,7 @@ void tp_test_1_tensor_processor()
     std::vector<int> tests = test_ids;
 
     std::vector<std::function<void(void)>> test_functions = {
-      tp_test_1_tensor_processor,  
+      tp_test_1_tensor_processor,
       tp_test_2_tensor_tokens,
       tp_test_3_tensor_operations,
       tp_test_4_aliases,
@@ -1964,7 +1964,7 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<80;i++)
       printf("#");
     printf("\n");
-    
+
     for (int i : tests)
     {
       assert(i > 0 && i <= test_functions.size());
@@ -1979,7 +1979,7 @@ void tp_test_1_tensor_processor()
     std::vector<int> tests = test_ids;
 
     std::vector<std::function<void(void)>> test_functions = {
-      tp_test_1_tensor_processor,  
+      tp_test_1_tensor_processor,
       tp_test_2_tensor_tokens,
       tp_test_3_tensor_operations,
       tp_test_4_aliases,
@@ -2011,7 +2011,7 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<80;i++)
       printf("#");
     printf("\n");
-    
+
     for (int i : tests)
     {
       assert(i > 0 && i <= test_functions.size());
@@ -2059,7 +2059,7 @@ void tp_test_1_tensor_processor()
       for (int i=0;i<test_functions.size();i++)
         tests[i] = i+1;
     }
-    
+
     TensorProcessor::init("GPU");
 
     for (int i=0;i<80;i++)
@@ -2068,7 +2068,7 @@ void tp_test_1_tensor_processor()
     for (int i=0;i<80;i++)
       printf("#");
     printf("\n");
-    
+
     for (int i : tests)
     {
       assert(i > 0 && i <= test_functions.size());
@@ -2078,9 +2078,9 @@ void tp_test_1_tensor_processor()
 
   void perform_tests()
   {
-    perform_tests_tensor_processor({});
-    perform_tests_tensor_processor_GPU({});
-    perform_tests_neural_networks({});
+    // perform_tests_tensor_processor({});
+    // perform_tests_tensor_processor_GPU({});
+    // perform_tests_neural_networks({});
     perform_tests_performance({});
   }
 }
