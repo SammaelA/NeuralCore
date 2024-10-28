@@ -18,9 +18,7 @@ public:
 protected:
   std::vector<float> memory;
   constexpr static unsigned AGroupSize = 256;
-#ifndef KERNEL_SLICER
   bool use_coop_mat_mul = true;
-#endif
 
   virtual void allocate_memory(unsigned size);
   virtual void set_input(const float* in __attribute__((size("size"))), unsigned offset, unsigned size);

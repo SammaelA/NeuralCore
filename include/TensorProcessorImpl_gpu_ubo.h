@@ -1,5 +1,5 @@
-#ifndef TensorProcessorImpl_UBO_H
-#define TensorProcessorImpl_UBO_H
+#ifndef TensorProcessorImpl_gpu_UBO_H
+#define TensorProcessorImpl_gpu_UBO_H
 
 #ifndef GLSL
 #define LAYOUT_STD140
@@ -26,6 +26,7 @@ struct TensorProcessorImpl_GPU_UBO_Data
 {
   uint memory_capacity; 
   uint memory_size; 
+  bool use_coop_mat_mul; 
   uint dummy_last;
 };
 

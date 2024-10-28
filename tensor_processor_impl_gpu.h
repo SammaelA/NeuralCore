@@ -12,7 +12,6 @@
 #include "vk_copy.h"
 #include "vk_context.h"
 
-
 #include "tensor_processor_impl.h"
 
 #include "include/TensorProcessorImpl_gpu_ubo.h"
@@ -63,15 +62,17 @@ public:
     UpdateTextureMembers(a_pCopyEngine);
   }
 
+  std::shared_ptr<vk_utils::ICopyEngine> m_pLastCopyHelper = nullptr;
   virtual void CommitDeviceData(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyHelper) // you have to define this virtual function in the original imput class
   {
+    ReserveEmptyVectors();
     InitMemberBuffers();
     UpdateAll(a_pCopyHelper);
+    m_pLastCopyHelper = a_pCopyHelper;
   }
   void CommitDeviceData() override { CommitDeviceData(m_ctx.pCopyHelper); }
   void GetExecutionTime(const char* a_funcName, float a_out[4]) override;
-
-
+  
   virtual void ReserveEmptyVectors();
   virtual void UpdatePlainMembers(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyEngine);
   virtual void UpdateVectorMembers(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyEngine);
@@ -178,8 +179,8 @@ public:
     size_t         allocId   = 0;
   };
 
-  virtual MemLoc AllocAndBind(const std::vector<VkBuffer>& a_buffers); ///< replace this function to apply custom allocator
-  virtual MemLoc AllocAndBind(const std::vector<VkImage>& a_image);    ///< replace this function to apply custom allocator
+  virtual MemLoc AllocAndBind(const std::vector<VkBuffer>& a_buffers, VkMemoryAllocateFlags a_flags = 0); ///< replace this function to apply custom allocator
+  virtual MemLoc AllocAndBind(const std::vector<VkImage>& a_image,    VkMemoryAllocateFlags a_flags = 0);    ///< replace this function to apply custom allocator
   virtual void   FreeAllAllocations(std::vector<MemLoc>& a_memLoc);    ///< replace this function to apply custom allocator
 
 protected:
@@ -209,7 +210,6 @@ protected:
 
   virtual void AllocMemoryForMemberBuffersAndImages(const std::vector<VkBuffer>& a_buffers, const std::vector<VkImage>& a_image);
   virtual std::string AlterShaderPath(const char* in_shaderPath) { return std::string("") + std::string(in_shaderPath); }
-
   
   
 

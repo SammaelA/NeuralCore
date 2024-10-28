@@ -90,12 +90,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatecosDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -119,12 +120,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatesinDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -148,12 +150,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateurandDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -184,12 +187,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createset_inputDSLayout()
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[2].binding            = 2;
   dsBindings[2].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[2].descriptorCount    = 1;
   dsBindings[2].stageFlags         = stageFlags;
   dsBindings[2].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -213,12 +217,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateequalDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -242,12 +247,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateminDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -271,12 +277,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatelogDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -300,12 +307,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createlogical_orDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -329,12 +337,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createnot_equalDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -358,12 +367,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatesqrtDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -387,12 +397,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatemaxDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -416,12 +427,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatepowDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -445,12 +457,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreategreaterDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -474,12 +487,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatedilateDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -503,12 +517,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createouter_productDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -532,12 +547,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatepadDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -561,12 +577,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatelessDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -590,12 +607,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createmax_pool_3D_diffDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -619,12 +637,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createless_equalDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -648,12 +667,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatesumDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -677,12 +697,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatecopyDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -706,12 +727,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateosumDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -735,12 +757,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatenotDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -764,12 +787,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateexpDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -793,12 +817,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatefillDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -829,12 +854,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createget_outputDSLayout()
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[2].binding            = 2;
   dsBindings[2].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[2].descriptorCount    = 1;
   dsBindings[2].stageFlags         = stageFlags;
   dsBindings[2].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -858,12 +884,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createlogical_andDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -887,12 +914,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateflipDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -916,12 +944,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatesubDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -945,12 +974,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateaddDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -974,12 +1004,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatemulDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1003,12 +1034,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Creategreater_equalDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1032,12 +1064,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatedivDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1061,12 +1094,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreateminimumDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1090,12 +1124,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createmax_pool_3DDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1119,12 +1154,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatemaximumDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1148,12 +1184,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatetransposeDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1177,12 +1214,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Creatematmul_transposedDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1206,12 +1244,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createmax_poolDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1235,12 +1274,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::CreatewhereDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1264,12 +1304,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createsmax_diffDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1293,12 +1334,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createconv3dDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1322,12 +1364,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createconv2dDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -1351,12 +1394,13 @@ VkDescriptorSetLayout TensorProcessorImpl_GPU::Createmax_pool_diffDSLayout()
   dsBindings[0].stageFlags         = stageFlags;
   dsBindings[0].pImmutableSamplers = nullptr;
 
-  // binding for POD members stored in m_classDataBuffer
+
   dsBindings[1].binding            = 1;
   dsBindings[1].descriptorType     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
   dsBindings[1].descriptorCount    = 1;
   dsBindings[1].stageFlags         = stageFlags;
   dsBindings[1].pImmutableSamplers = nullptr;
+
 
   VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {};
   descriptorSetLayoutCreateInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

@@ -29,6 +29,7 @@ constexpr uint32_t KGEN_REDUCTION_LAST_STEP    = 16;
 void TensorProcessorImpl_GPU::UpdatePlainMembers(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyEngine)
 {
   const size_t maxAllowedSize = std::numeric_limits<uint32_t>::max();
+  m_uboData.use_coop_mat_mul = use_coop_mat_mul;
   m_uboData.memory_size     = uint32_t( memory.size() );     assert( memory.size() < maxAllowedSize );
   m_uboData.memory_capacity = uint32_t( memory.capacity() ); assert( memory.capacity() < maxAllowedSize );
   a_pCopyEngine->UpdateBuffer(m_classDataBuffer, 0, &m_uboData, sizeof(m_uboData));
@@ -37,6 +38,7 @@ void TensorProcessorImpl_GPU::UpdatePlainMembers(std::shared_ptr<vk_utils::ICopy
 void TensorProcessorImpl_GPU::ReadPlainMembers(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyEngine)
 {
   a_pCopyEngine->ReadBuffer(m_classDataBuffer, 0, &m_uboData, sizeof(m_uboData));
+  use_coop_mat_mul = m_uboData.use_coop_mat_mul;
   memory.resize(m_uboData.memory_size);
 }
 
@@ -45,6 +47,7 @@ void TensorProcessorImpl_GPU::UpdateVectorMembers(std::shared_ptr<vk_utils::ICop
   if(memory.size() > 0)
     a_pCopyEngine->UpdateBuffer(m_vdata.memoryBuffer, 0, memory.data(), memory.size()*sizeof(float) );
 }
+
 
 void TensorProcessorImpl_GPU::UpdateTextureMembers(std::shared_ptr<vk_utils::ICopyEngine> a_pCopyEngine)
 {
@@ -77,6 +80,7 @@ void TensorProcessorImpl_GPU::cosCmd(float *data, unsigned steps, Variable A, Va
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, cosLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cosPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -108,6 +112,7 @@ void TensorProcessorImpl_GPU::sinCmd(float *data, unsigned steps, Variable A, Va
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, sinLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sinPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -139,6 +144,7 @@ void TensorProcessorImpl_GPU::urandCmd(float *data, unsigned steps, Variable A, 
   pcData.m_A = A;
   pcData.m_seed = seed;
   vkCmdPushConstants(m_currCmdBuffer, urandLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, urandPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -168,6 +174,7 @@ void TensorProcessorImpl_GPU::set_inputCmd(const float* data_in, unsigned offset
   pcData.m_tFlags = m_currThreadFlags;
   pcData.m_offset = offset;
   vkCmdPushConstants(m_currCmdBuffer, set_inputLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, set_inputPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -210,6 +217,7 @@ void TensorProcessorImpl_GPU::equalCmd(float *data, unsigned steps, unsigned tot
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, equalLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, equalPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -252,6 +260,7 @@ void TensorProcessorImpl_GPU::minCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, minLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -283,6 +292,7 @@ void TensorProcessorImpl_GPU::logCmd(float *data, unsigned steps, Variable A, Va
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, logLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -325,6 +335,7 @@ void TensorProcessorImpl_GPU::logical_orCmd(float *data, unsigned steps, unsigne
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, logical_orLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_orPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -367,6 +378,7 @@ void TensorProcessorImpl_GPU::not_equalCmd(float *data, unsigned steps, unsigned
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, not_equalLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, not_equalPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -398,6 +410,7 @@ void TensorProcessorImpl_GPU::sqrtCmd(float *data, unsigned steps, Variable A, V
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, sqrtLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sqrtPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -440,6 +453,7 @@ void TensorProcessorImpl_GPU::maxCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, maxLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maxPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -482,6 +496,7 @@ void TensorProcessorImpl_GPU::powCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, powLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, powPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -524,6 +539,7 @@ void TensorProcessorImpl_GPU::greaterCmd(float *data, unsigned steps, unsigned t
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, greaterLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greaterPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -568,6 +584,7 @@ void TensorProcessorImpl_GPU::dilateCmd(float *data, unsigned steps, unsigned x_
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, dilateLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, dilatePipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -602,6 +619,7 @@ void TensorProcessorImpl_GPU::outer_productCmd(float *data, unsigned steps, unsi
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, outer_productLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, outer_productPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -640,6 +658,7 @@ void TensorProcessorImpl_GPU::padCmd(float *data, unsigned steps, unsigned step_
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, padLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, padPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -682,6 +701,7 @@ void TensorProcessorImpl_GPU::lessCmd(float *data, unsigned steps, unsigned tota
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, lessLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, lessPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -725,6 +745,7 @@ void TensorProcessorImpl_GPU::max_pool_3D_diffCmd(float *data, int steps, int x_
   pcData.m_dLoss_dOutput = dLoss_dOutput;
   pcData.m_dLoss_dInput = dLoss_dInput;
   vkCmdPushConstants(m_currCmdBuffer, max_pool_3D_diffLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3D_diffPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -767,6 +788,7 @@ void TensorProcessorImpl_GPU::less_equalCmd(float *data, unsigned steps, unsigne
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, less_equalLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, less_equalPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -800,6 +822,7 @@ void TensorProcessorImpl_GPU::sumCmd(float *data, unsigned steps, unsigned step_
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, sumLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sumPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -835,6 +858,7 @@ void TensorProcessorImpl_GPU::copyCmd(float *data, unsigned steps, unsigned from
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, copyLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, copyPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -868,6 +892,7 @@ void TensorProcessorImpl_GPU::osumCmd(float *data, unsigned steps, unsigned step
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, osumLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, osumPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -899,6 +924,7 @@ void TensorProcessorImpl_GPU::notCmd(float *data, unsigned steps, Variable A, Va
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, notLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, notPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -930,6 +956,7 @@ void TensorProcessorImpl_GPU::expCmd(float *data, unsigned steps, Variable A, Va
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, expLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, expPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -961,6 +988,7 @@ void TensorProcessorImpl_GPU::fillCmd(float *data, unsigned steps, Variable A, f
   pcData.m_A = A;
   pcData.m_val = val;
   vkCmdPushConstants(m_currCmdBuffer, fillLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fillPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -990,6 +1018,7 @@ void TensorProcessorImpl_GPU::get_outputCmd(float* data_out, unsigned offset, un
   pcData.m_tFlags = m_currThreadFlags;
   pcData.m_offset = offset;
   vkCmdPushConstants(m_currCmdBuffer, get_outputLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, get_outputPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1032,6 +1061,7 @@ void TensorProcessorImpl_GPU::logical_andCmd(float *data, unsigned steps, unsign
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, logical_andLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_andPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1067,6 +1097,7 @@ void TensorProcessorImpl_GPU::flipCmd(float *data, unsigned steps, unsigned flip
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, flipLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, flipPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1109,6 +1140,7 @@ void TensorProcessorImpl_GPU::subCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, subLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, subPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1151,6 +1183,7 @@ void TensorProcessorImpl_GPU::addCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, addLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, addPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1193,6 +1226,7 @@ void TensorProcessorImpl_GPU::mulCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, mulLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, mulPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1235,6 +1269,7 @@ void TensorProcessorImpl_GPU::greater_equalCmd(float *data, unsigned steps, unsi
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, greater_equalLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greater_equalPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1277,6 +1312,7 @@ void TensorProcessorImpl_GPU::divCmd(float *data, unsigned steps, unsigned total
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, divLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, divPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1310,6 +1346,7 @@ void TensorProcessorImpl_GPU::minimumCmd(float *data, unsigned steps, unsigned s
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, minimumLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minimumPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1350,6 +1387,7 @@ void TensorProcessorImpl_GPU::max_pool_3DCmd(float *data, int steps, int x_steps
   pcData.m_A = A;
   pcData.m_res = res;
   vkCmdPushConstants(m_currCmdBuffer, max_pool_3DLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3DPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1383,6 +1421,7 @@ void TensorProcessorImpl_GPU::maximumCmd(float *data, unsigned steps, unsigned s
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, maximumLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maximumPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1416,6 +1455,7 @@ void TensorProcessorImpl_GPU::transposeCmd(float *data, unsigned steps, unsigned
   pcData.m_A = A;
   pcData.m_B = B;
   vkCmdPushConstants(m_currCmdBuffer, transposeLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, transposePipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1452,6 +1492,7 @@ void TensorProcessorImpl_GPU::matmul_transposedCmd(float *data, unsigned A_col_l
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, matmul_transposedLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, matmul_transposedPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1488,6 +1529,7 @@ void TensorProcessorImpl_GPU::max_poolCmd(float *data, int steps, int x_steps, i
   pcData.m_A = A;
   pcData.m_res = res;
   vkCmdPushConstants(m_currCmdBuffer, max_poolLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_poolPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1530,6 +1572,7 @@ void TensorProcessorImpl_GPU::whereCmd(float *data, unsigned steps, unsigned tot
   pcData.m_B = B;
   pcData.m_C = C;
   vkCmdPushConstants(m_currCmdBuffer, whereLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, wherePipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1566,6 +1609,7 @@ void TensorProcessorImpl_GPU::smax_diffCmd(float *data, unsigned steps, unsigned
   pcData.m_dLoss_dOutput = dLoss_dOutput;
   pcData.m_dLoss_dInput = dLoss_dInput;
   vkCmdPushConstants(m_currCmdBuffer, smax_diffLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, smax_diffPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1608,6 +1652,7 @@ void TensorProcessorImpl_GPU::conv3dCmd(float *data, int steps, int x_steps, int
   pcData.m_kernel = kernel;
   pcData.m_res = res;
   vkCmdPushConstants(m_currCmdBuffer, conv3dLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv3dPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1648,6 +1693,7 @@ void TensorProcessorImpl_GPU::conv2dCmd(float *data, int steps, int x_steps, int
   pcData.m_kernel = kernel;
   pcData.m_res = res;
   vkCmdPushConstants(m_currCmdBuffer, conv2dLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv2dPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1686,6 +1732,7 @@ void TensorProcessorImpl_GPU::max_pool_diffCmd(float *data, int steps, int x_ste
   pcData.m_dLoss_dOutput = dLoss_dOutput;
   pcData.m_dLoss_dInput = dLoss_dInput;
   vkCmdPushConstants(m_currCmdBuffer, max_pool_diffLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(KernelArgsPC), &pcData);
+  
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_diffPipeline);
   vkCmdDispatch    (m_currCmdBuffer, (sizeX + blockSizeX - 1) / blockSizeX, (sizeY + blockSizeY - 1) / blockSizeY, (sizeZ + blockSizeZ - 1) / blockSizeZ);
 }
@@ -1702,8 +1749,8 @@ void TensorProcessorImpl_GPU::copyKernelFloatCmd(uint32_t length)
 
 void TensorProcessorImpl_GPU::matMulTransposeCmd(uint32_t A_offset, uint32_t B_offset, uint32_t C_offset, uint32_t A_col_len, uint32_t B_col_len, uint32_t A_row_len)
 {
-  const uint32_t blockSizeX = 8 * 2;
-  const uint32_t blockSizeY = 8 * 2;
+  const uint32_t blockSizeX = 8;
+  const uint32_t blockSizeY = 8;
 
   vkCmdBindPipeline(m_currCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, matMulTransposePipeline);
   struct KernelArgsPC
@@ -1773,26 +1820,31 @@ void TensorProcessorImpl_GPU::BarriersForSeveralBuffers(VkBuffer* a_inBuffers, V
 
 void TensorProcessorImpl_GPU::get_outputCmd(VkCommandBuffer a_commandBuffer, float* out, unsigned offset, unsigned size)
 {
+  VkPipelineStageFlagBits prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
   m_currCmdBuffer = a_commandBuffer;
   VkMemoryBarrier memoryBarrier = { VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
-    vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, get_outputLayout, 0, 1, &m_allGeneratedDS[0], 0, nullptr);
+    {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, get_outputLayout, 0, 1, &m_allGeneratedDS[0], 0, nullptr);
   get_outputCmd(out, offset, size);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
 
 }
 
 void TensorProcessorImpl_GPU::set_inputCmd(VkCommandBuffer a_commandBuffer, const float* in, unsigned offset, unsigned size)
 {
+  VkPipelineStageFlagBits prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
   m_currCmdBuffer = a_commandBuffer;
   VkMemoryBarrier memoryBarrier = { VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
-    vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, set_inputLayout, 0, 1, &m_allGeneratedDS[1], 0, nullptr);
+    {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, set_inputLayout, 0, 1, &m_allGeneratedDS[1], 0, nullptr);
   set_inputCmd(in, offset, size);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
 
 }
 
 void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const nn::TensorProgram &program)
 {
+  VkPipelineStageFlagBits prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
   m_currCmdBuffer = a_commandBuffer;
   VkMemoryBarrier memoryBarrier = { VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT };
     unsigned data_size = memory.size();
@@ -1826,134 +1878,160 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
     case nn::TensorProgram::NOOP:
       break;
     case nn::TensorProgram::ADD:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, addLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, addLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   addCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::MUL:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, mulLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, mulLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   mulCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::SUB:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, subLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, subLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   subCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::DIV:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, divLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, divLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   divCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::GREATER:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greaterLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greaterLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   greaterCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::LESS:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, lessLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, lessLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   lessCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::EQUAL:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   equalCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::GE:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greater_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, greater_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   greater_equalCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::LE:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, less_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, less_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   less_equalCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::NE:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, not_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, not_equalLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   not_equalCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::OR:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_orLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_orLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   logical_orCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::AND:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_andLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logical_andLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   logical_andCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::WHERE:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, whereLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, whereLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   whereCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;      
     case nn::TensorProgram::MIN:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   minCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;     
     case nn::TensorProgram::MAX:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maxLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maxLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   maxCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;     
     case nn::TensorProgram::POW:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, powLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, powLayout, 0, 1, &m_allGeneratedDS[2], 0, nullptr);
   powCmd(memory.data(), (arg0*arg1*arg2+AGroupSize-1)/AGroupSize, arg0*arg1*arg2, arg1, arg2, arg3 == 0 ? ~0u : 0u, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;     
     case nn::TensorProgram::EXP:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, expLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, expLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   expCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::SQRT:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sqrtLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sqrtLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   sqrtCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::SIN:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sinLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sinLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   sinCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::COS:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cosLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cosLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   cosCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::LOG:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, logLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   logCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::NOT:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, notLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, notLayout, 0, 1, &m_allGeneratedDS[3], 0, nullptr);
   notCmd(memory.data(), A.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::SUM:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, sumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
   sumCmd(memory.data(), C.total_size, A.total_size / C.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::O_SUM:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, osumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, osumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
   osumCmd(memory.data(), C.total_size, A.total_size / C.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::MINIMUM:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minimumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, minimumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
   minimumCmd(memory.data(), C.total_size, A.total_size / C.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::MAXIMUM:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maximumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, maximumLayout, 0, 1, &m_allGeneratedDS[4], 0, nullptr);
   maximumCmd(memory.data(), C.total_size, A.total_size / C.total_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::MATMUL_T:
       #if DEBUG
@@ -1971,25 +2049,29 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       }
       else
       {
-        vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, matmul_transposedLayout, 0, 1, &m_allGeneratedDS[6], 0, nullptr);
+        {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, matmul_transposedLayout, 0, 1, &m_allGeneratedDS[6], 0, nullptr);
   matmul_transposedCmd(memory.data(), A.sizes[1], B.Dim == 2 ? B.sizes[1] : 1, A.sizes[0], A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       }
       break;
     case nn::TensorProgram::MOV:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, copyLayout, 0, 1, &m_allGeneratedDS[7], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, copyLayout, 0, 1, &m_allGeneratedDS[7], 0, nullptr);
   copyCmd(memory.data(), A.total_size, 0, 0, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::FILL:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fillLayout, 0, 1, &m_allGeneratedDS[8], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fillLayout, 0, 1, &m_allGeneratedDS[8], 0, nullptr);
   fillCmd(memory.data(), C.total_size, C, *((float *)(&arg0)));
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::COPY:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, copyLayout, 0, 1, &m_allGeneratedDS[9], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, copyLayout, 0, 1, &m_allGeneratedDS[9], 0, nullptr);
   copyCmd(memory.data(), arg2, arg0, arg1, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::TRANSP:
     {
@@ -2006,9 +2088,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (col_len > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: TRANSP workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", col_len);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, transposeLayout, 0, 1, &m_allGeneratedDS[10], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, transposeLayout, 0, 1, &m_allGeneratedDS[10], 0, nullptr);
   transposeCmd(memory.data(), steps, row_len, col_len, group_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::OUTER_P:
@@ -2018,19 +2101,22 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (B.sizes[0] > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: OUTER_P workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", B.sizes[0]);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, outer_productLayout, 0, 1, &m_allGeneratedDS[11], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, outer_productLayout, 0, 1, &m_allGeneratedDS[11], 0, nullptr);
   outer_productCmd(memory.data(), A.total_size/A.sizes[0], A.sizes[0], B.sizes[0], A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::SMAX_D:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, smax_diffLayout, 0, 1, &m_allGeneratedDS[12], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, smax_diffLayout, 0, 1, &m_allGeneratedDS[12], 0, nullptr);
   smax_diffCmd(memory.data(), A.sizes[A.Dim-1], A.total_size/A.sizes[A.Dim-1], A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::PAD:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, padLayout, 0, 1, &m_allGeneratedDS[13], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, padLayout, 0, 1, &m_allGeneratedDS[13], 0, nullptr);
   padCmd(memory.data(), arg0, arg1, arg2, arg3, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::CONV_2D:
     {
@@ -2047,9 +2133,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (y_steps > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: CONV_2D workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", y_steps);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv2dLayout, 0, 1, &m_allGeneratedDS[14], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv2dLayout, 0, 1, &m_allGeneratedDS[14], 0, nullptr);
   conv2dCmd(memory.data(), steps, x_steps, y_steps, stride, in_channels, out_channels, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::FLIP:
@@ -2060,9 +2147,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
         group_size *= A.sizes[d];
       unsigned flip_size = A.sizes[flip_dim];
       unsigned steps = A.total_size/(flip_size*group_size);
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, flipLayout, 0, 1, &m_allGeneratedDS[15], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, flipLayout, 0, 1, &m_allGeneratedDS[15], 0, nullptr);
   flipCmd(memory.data(), steps, flip_size, group_size, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::MPOOL:
@@ -2076,9 +2164,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (A.sizes[1]/window_y > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: MPOOL workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", A.sizes[1]/window_y);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_poolLayout, 0, 1, &m_allGeneratedDS[16], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_poolLayout, 0, 1, &m_allGeneratedDS[16], 0, nullptr);
   max_poolCmd(memory.data(), steps, A.sizes[0]/window_x, A.sizes[1]/window_y, window_x, window_y, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::MPOOL_D:
@@ -2092,23 +2181,27 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (A.sizes[1]/window_y > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: MPOOL_D workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", A.sizes[1]/window_y);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_diffLayout, 0, 1, &m_allGeneratedDS[17], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_diffLayout, 0, 1, &m_allGeneratedDS[17], 0, nullptr);
   max_pool_diffCmd(memory.data(), steps, A.sizes[0]/window_x, A.sizes[1]/window_y, window_x, window_y, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::DILATE:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fillLayout, 0, 1, &m_allGeneratedDS[18], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fillLayout, 0, 1, &m_allGeneratedDS[18], 0, nullptr);
   fillCmd(memory.data(), C.total_size, C, 0.0f);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, dilateLayout, 0, 1, &m_allGeneratedDS[19], 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, dilateLayout, 0, 1, &m_allGeneratedDS[19], 0, nullptr);
   dilateCmd(memory.data(), A.total_size, A.sizes[0], arg0, A.Dim>1?A.sizes[1]:1, arg1, A.Dim>2?A.sizes[2]:1, arg2, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::URAND:
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, urandLayout, 0, 1, &m_allGeneratedDS[20], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, urandLayout, 0, 1, &m_allGeneratedDS[20], 0, nullptr);
   urandCmd(memory.data(), C.total_size, C, arg0 == 0 ? rand() : arg0);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
       break;
     case nn::TensorProgram::CONV_3D:
     {
@@ -2126,9 +2219,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (y_steps > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: CONV_3D workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", y_steps);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv3dLayout, 0, 1, &m_allGeneratedDS[21], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, conv3dLayout, 0, 1, &m_allGeneratedDS[21], 0, nullptr);
   conv3dCmd(memory.data(), steps, x_steps, y_steps, z_steps, stride, in_channels, out_channels, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::MPOOL_3D:
@@ -2143,9 +2237,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (A.sizes[1]/window_y > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: MPOOL workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", A.sizes[1]/window_y);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3DLayout, 0, 1, &m_allGeneratedDS[22], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3DLayout, 0, 1, &m_allGeneratedDS[22], 0, nullptr);
   max_pool_3DCmd(memory.data(), steps, A.sizes[0]/window_x, A.sizes[1]/window_y, A.sizes[2]/window_z, window_x, window_y, window_z, A, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     case nn::TensorProgram::MPOOL_3D_D:
@@ -2160,9 +2255,10 @@ void TensorProcessorImpl_GPU::processCmd(VkCommandBuffer a_commandBuffer, const 
       if (A.sizes[1]/window_y > maxWorkGroupSizeZ)
         fprintf(stderr, "TensorProgram: MPOOL_D workgroup Z size (%u) exceeds limit. Program won't execute correctly!\n", A.sizes[1]/window_y);
       #endif
-      vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3D_diffLayout, 0, 1, &m_allGeneratedDS[23], 0, nullptr);
+      {vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, max_pool_3D_diffLayout, 0, 1, &m_allGeneratedDS[23], 0, nullptr);
   max_pool_3D_diffCmd(memory.data(), steps, A.sizes[0]/window_x, A.sizes[1]/window_y, A.sizes[2]/window_z, window_x, window_y, window_z, A, B, C);
-  vkCmdPipelineBarrier(m_currCmdBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  vkCmdPipelineBarrier(m_currCmdBuffer, prevStageBits, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+  prevStageBits = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;};
     }
       break;
     default:
